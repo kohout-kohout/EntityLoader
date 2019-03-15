@@ -198,7 +198,7 @@ class ParameterFinder
         foreach ($reflection->getPersistentParams() as $persistent => $_) {
             $parameter = new ReflectionProperty($reflection->getName(), $persistent);
             if (!$parameter->isStatic()) {
-                $type = (string) PhpReflection::parseAnnotation($parameter, 'var');
+                $type = (string) \Nette\DI\Helpers::parseAnnotation($parameter, 'var');
                 if ($type !== '') {
                     if (!(bool) Strings::match($type, '/^[[:alnum:]_\\\\]++$/')) {
                         throw new TypeHintException(sprintf('Type hint "%s" is not valid. Only alphanumeric characters, "_" and "\" are allowed.', $type));
@@ -213,7 +213,7 @@ class ParameterFinder
 
     private function normalizeType(string $type, ReflectionClass $class): string
     {
-        return isset(self::$simpleTypes[$type]) ? self::$simpleTypes[$type] : PhpReflection::expandClassName($type, $class);
+        return isset(self::$simpleTypes[$type]) ? self::$simpleTypes[$type] : \Nette\Utils\Reflection::expandClassName($type, $class);
     }
 
     private function createInfoObject(string $type, bool $optional): stdClass

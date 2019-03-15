@@ -22,15 +22,14 @@ class RequestEntityUnloader
         $this->entityUnloader = $entityUnloader;
     }
 
-    public function filterOut(Request $request, bool $envelopes = false): void
+    public function filterOut(array &$params, bool $envelopes = false): array
     {
-        $parameters = $request->getParameters();
-        foreach ($parameters as &$value) {
+        foreach ($params as &$value) {
             if (is_object($value)) {
                 $parameter = $this->entityUnloader->filterOut($value);
                 $value = $envelopes ? new Envelope($value, $parameter) : $parameter;
             }
         }
-        $request->setParameters($parameters);
+        return $params;
     }
 }

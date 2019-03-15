@@ -8,7 +8,7 @@ use Arachne\EntityLoader\Application\RequestEntityUnloader;
 use Nette\Application\IRouter;
 use Nette\Application\Request;
 use Nette\Http\IRequest;
-use Nette\Http\Url;
+use Nette\Http\UrlScript;
 
 /**
  * @author Jáchym Toušek <enumag@gmail.com>
@@ -40,7 +40,7 @@ class RouterWrapper implements IRouter
     /**
      * {@inheritdoc}
      */
-    public function match(IRequest $httpRequest): ?Request
+    public function match(IRequest $httpRequest): ?array
     {
         return $this->router->match($httpRequest);
     }
@@ -48,11 +48,9 @@ class RouterWrapper implements IRouter
     /**
      * {@inheritdoc}
      */
-    public function constructUrl(Request $request, Url $refUrl): ?string
+    public function constructUrl(array $params, UrlScript $refUrl): ?string
     {
-        $request = clone $request;
-        $this->unloader->filterOut($request, $this->envelopes);
-
-        return $this->router->constructUrl($request, $refUrl);
+        $this->unloader->filterOut($params, $this->envelopes);
+        return $this->router->constructUrl($params, $refUrl);
     }
 }
