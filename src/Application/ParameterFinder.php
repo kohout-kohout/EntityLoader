@@ -186,7 +186,7 @@ class ParameterFinder
     {
         $info = [];
         foreach ($reflection->getParameters() as $parameter) {
-            $type = $parameter->getType() !== null ? (string) $parameter->getType() : 'mixed';
+            $type = $parameter->getType() !== null ? $parameter->getType()->getName() : 'mixed';
             $optional = $parameter->isOptional();
             $info[$prefix.$parameter->getName()] = $this->createInfoObject($type, $optional);
         }
