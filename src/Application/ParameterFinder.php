@@ -200,8 +200,10 @@ class ParameterFinder
         foreach ($reflection->getPersistentParams() as $persistent => $_) {
             $parameter = new ReflectionProperty($reflection->getName(), $persistent);
             if (!$parameter->isStatic()) {
-                
-                $reflectionType = ($class = (string)$parameter->getType()) ? '\\' . $class : null;
+
+                $reflectionType = ($class = str_replace('?', '', (string)$parameter->getType()))
+                    ? (class_exists($class) ? '\\' . $class : $class)
+                    : null;
                 $annotationType = ($class = (string)\Nette\DI\Helpers::parseAnnotation($parameter, 'var')) ? $class : null;
                 $type = $reflectionType ?? $annotationType ?? '';
 
