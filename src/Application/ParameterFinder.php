@@ -200,7 +200,11 @@ class ParameterFinder
         foreach ($reflection->getPersistentParams() as $persistent => $_) {
             $parameter = new ReflectionProperty($reflection->getName(), $persistent);
             if (!$parameter->isStatic()) {
-                $type = (string) \Nette\DI\Helpers::parseAnnotation($parameter, 'var');
+                
+                $reflectionType = ($class = (string)$parameter->getType()) ? '\\' . $class : null;
+                $annotationType = ($class = (string)\Nette\DI\Helpers::parseAnnotation($parameter, 'var')) ? $class : null;
+                $type = $reflectionType ?? $annotationType ?? '';
+
                 if ($type !== '') {
                     if (!(bool) Strings::match($type, '/^[[:alnum:]_\\\\]++$/')) {
                         throw new TypeHintException(sprintf('Type hint "%s" is not valid. Only alphanumeric characters, "_" and "\" are allowed.', $type));
