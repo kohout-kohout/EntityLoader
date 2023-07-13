@@ -201,9 +201,14 @@ class ParameterFinder
             $parameter = new ReflectionProperty($reflection->getName(), $persistent);
             if (!$parameter->isStatic()) {
 
-                $reflectionType = ($class = str_replace('?', '', (string)$parameter->getType()))
-                    ? (class_exists($class) ? '\\' . $class : $class)
+                if($parameter->getType() !== null && !($parameter->getType() instanceof \ReflectionNamedType)) {
+                    throw new TypeHintException("Type hint \"{$parameter->getType()}\" is not valid. Only named type is allowed for persistent properties. None of intersection and union type is allowed.");
+                }
+
+                $reflectionType = $parameter->getType() instanceof \ReflectionNamedType
+                    ? class_exists($reflectionTypeName = (string)$parameter->getType()->getName()) ? '\\' . $reflectionTypeName : $reflectionTypeName
                     : null;
+
                 $annotationType = ($class = (string)\Nette\DI\Helpers::parseAnnotation($parameter, 'var')) ? $class : null;
                 $type = $reflectionType ?? $annotationType ?? '';
 
